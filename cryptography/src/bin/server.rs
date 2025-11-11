@@ -49,7 +49,7 @@ fn read_tcp_message(mut stream: TcpStream) -> std::io::Result<()> {
 fn handle_client(stream: TcpStream) -> std::io::Result<()>  {
 
     
-    read_tcp_message(stream);
+    read_tcp_message(stream)?;
 
 
     Ok(())
