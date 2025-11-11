@@ -78,6 +78,7 @@ fn decrypt_file(cipher: &Aes256Gcm, ciphertext_vec: Vec<u8>) -> (String, Vec<u8>
 
 
 
+
 fn main() -> std::io::Result<()> {
 
 
@@ -101,10 +102,10 @@ fn main() -> std::io::Result<()> {
     // create encryption key -- same used througout
     let key =  Aes256Gcm::generate_key(OsRng);
     let cipher = Aes256Gcm::new(&key);
-
     let file_id = 0;
 
-
+    
+    
     
 
     Ok(())
