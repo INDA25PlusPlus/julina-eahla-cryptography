@@ -108,7 +108,7 @@ mod tests {
 
     #[test]
     fn test_encryption_gcm() {
-        let now = Instant::now(); //tidtagning
+        let t_total = Instant::now(); //tidtagning
         let key = Aes256Gcm::generate_key(OsRng);
 
         let cipher = Aes256Gcm::new(&key);
@@ -118,23 +118,23 @@ mod tests {
         let ciphertext = cipher.encrypt(&nonce, b"Hello World!".as_ref()).unwrap();
 
         let plaintext = cipher.decrypt(&nonce, ciphertext.as_ref()).unwrap();
-        let elapsed = now.elapsed();
+        let elapsed_total = t_total.elapsed();
 
         assert_eq!(String::from_utf8(plaintext).unwrap(), "Hello World!");
-        print!("Time elapsed. total: {:#?} ", elapsed); //tidtagning
+        print!("Time elapsed. total: {:#?} ", elapsed_total); //tidtagning
     }
 
     #[test]
     fn test_build_plaintext() {
-        let t_total = Instant::now(); //tid-tagning
-        //skapa test_fil
+        let t_total = Instant::now(); //time
+        //create test file
         let file = "test_file.txt";
         let mut test_file = File::create(&file).unwrap();
         test_file.write_all(b"Hello World!").unwrap();
         let full_path = env::current_dir().unwrap().join(file);
 
         let t_func = Instant::now();
-        let test = build_plaintext(full_path.to_str().unwrap()).unwrap(); //testa
+        let test = build_plaintext(full_path.to_str().unwrap()).unwrap(); //test function
         let elapsed_func = t_func.elapsed();
 
         remove_file(full_path).unwrap();
@@ -152,6 +152,39 @@ mod tests {
         print!(
             "Time elapsed. total: {:#?} function: {:#?} ",
             elapsed_total, elapsed_func
+        );
+    }
+    #[test]
+    fn test_endecrypt() {
+        let t_total = Instant::now();
+        //create test file
+        let file = "test_file.txt";
+        let mut test_file = File::create(&file).unwrap();
+        test_file.write_all(b"Hello World!").unwrap();
+        let full_path = env::current_dir().unwrap().join(file);
+
+        let key = Aes256Gcm::generate_key(OsRng);
+        let cipher = Aes256Gcm::new(&key);
+
+        let t_encrypt = Instant::now(); //time
+
+        let encrypted = encrypt_file(&cipher, full_path.to_str().unwrap());
+
+        let elapsed_encrypt = t_encrypt.elapsed(); //time
+        let t_decrypt = Instant::now(); //time
+
+        let decrypted = decrypt_file(&cipher, encrypted);
+
+        let elapsed_decrypt = t_decrypt.elapsed(); //time
+        let elapsed_total = t_total.elapsed(); //time
+
+        assert_eq!(
+            decrypted,
+            ("test_file.txt".to_string(), b"Hello World!".to_vec())
+        );
+        print!(
+            "Time elapsed. total: {:#?} encrypt: {:#?} decrypt: {:#?} ",
+            elapsed_total, elapsed_encrypt, elapsed_decrypt
         );
     }
 }
