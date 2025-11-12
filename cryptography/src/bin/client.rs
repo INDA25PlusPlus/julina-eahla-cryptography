@@ -100,7 +100,11 @@ fn main() -> std::io::Result<()> {
 mod tests {
 
     use super::*;
-    use std::time::Instant;
+    use std::{
+        env,
+        fs::{File, remove_file},
+        time::Instant,
+    };
 
     #[test]
     fn test_encryption_gcm() {
@@ -117,6 +121,37 @@ mod tests {
         let elapsed = now.elapsed();
 
         assert_eq!(String::from_utf8(plaintext).unwrap(), "Hello World!");
-        print!("Time elapsed: {:#?} ", elapsed); //tidtagning
+        print!("Time elapsed. total: {:#?} ", elapsed); //tidtagning
+    }
+
+    #[test]
+    fn test_build_plaintext() {
+        let t_total = Instant::now(); //tid-tagning
+        //skapa test_fil
+        let file = "test_file.txt";
+        let mut test_file = File::create(&file).unwrap();
+        test_file.write_all(b"Hello World!").unwrap();
+        let full_path = env::current_dir().unwrap().join(file);
+
+        let t_func = Instant::now();
+        let test = build_plaintext(full_path.to_str().unwrap()).unwrap(); //testa
+        let elapsed_func = t_func.elapsed();
+
+        remove_file(full_path).unwrap();
+        let elapsed_total = t_total.elapsed();
+
+        assert_eq!(
+            test,
+            [
+                &(13u16).to_be_bytes()[..], //len of filename (test_file.txt is 13)
+                b"test_file.txt",           //filename
+                b"Hello World!"             //contents
+            ]
+            .concat()
+        );
+        print!(
+            "Time elapsed. total: {:#?} function: {:#?} ",
+            elapsed_total, elapsed_func
+        );
     }
 }
