@@ -111,6 +111,7 @@ fn client_loop(stream: TcpStream, cipher: &Aes256Gcm) -> std::io::Result<()> {
         let input = input.trim(); 
 
         if input == "q" || input == "quit" {
+            // send some message to server?
             break;
         }
 
