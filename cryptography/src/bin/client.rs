@@ -142,6 +142,26 @@ fn handle_encrypt_send(stream: &TcpStream, cipher: &Aes256Gcm) -> std::io::Resul
 
 fn handle_decrypt_request(stream: &TcpStream, cipher: &Aes256Gcm) -> std::io::Result<()> {
 
+
+    loop {
+
+        let mut input = String::new();
+        println!("\n");
+        println!("Enter filename or file id of file to fetch from server and decrypt (or q to exit): ");
+
+        let _  = stdout().flush();
+        stdin().read_line(&mut input).expect("Did not enter a correct string");
+        let input = input.trim();
+
+        if input == "q" || input == "quit" {
+            // send some message to server?
+            println!("Exiting...");
+            break;
+        }
+
+        // if filename provided, look up file id in hashmap
+    }
+
     Ok(())
     
 }
