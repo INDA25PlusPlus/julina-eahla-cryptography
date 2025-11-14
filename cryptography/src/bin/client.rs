@@ -217,7 +217,7 @@ fn handle_decrypt_request(stream: &mut TcpStream, cipher: &Aes256Gcm, file_index
         stream.write(prefix)?;
         stream.write(&file_id.to_be_bytes())?;
 
-        let mut received_prefix_buf = [0u8, 1];
+        let mut received_prefix_buf = [0u8; 1];
         stream.read_exact(&mut received_prefix_buf)?;
         let received_prefix = received_prefix_buf[0];
 

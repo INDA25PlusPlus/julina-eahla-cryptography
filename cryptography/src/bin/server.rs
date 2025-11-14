@@ -77,7 +77,7 @@
         let len = encrypted_file.len() as u32;
         stream.write_all(&len.to_be_bytes())?;
 
-        stream.write_all(&encrypted_file)?;
+        stream.write_all(encrypted_file)?;
 
         stream.flush()?; 
 
